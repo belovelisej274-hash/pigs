@@ -237,8 +237,8 @@ function share() {
     try { const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = 'hryuny.png'; a.click(); } catch (e) { }
   });
 }
-function hap(t) { try { TG.HapticFeedback.notificationOccurred(t || 'success'); } catch (e) { } }
-function tk() { try { TG.HapticFeedback.impactOccurred('light'); } catch (e) { } }
+function hap(t) { if (window.CL && !CL.s('hap')) return; try { TG.HapticFeedback.notificationOccurred(t || 'success'); } catch (e) { } }
+function tk() { if (window.CL && !CL.s('hap')) return; try { TG.HapticFeedback.impactOccurred('light'); } catch (e) { } }
 
 /* ===== ПУБЛИЧНЫЙ ИНТЕРФЕЙС ===== */
 window.HX = {

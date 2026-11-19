@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ru"><head><meta charset="utf-8">
+<html lang="ru"><head><meta charset="utf-8"><script>window.__E=[];addEventListener("error",function(e){__E.push(new Date().toLocaleTimeString()+" "+(e.message||"err")+" @"+String(e.filename||"").split("/").pop()+":"+e.lineno)});addEventListener("unhandledrejection",function(e){__E.push(new Date().toLocaleTimeString()+" promise: "+(e.reason&&e.reason.message||e.reason))})</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Свинопад</title>
 <style>
@@ -90,7 +90,7 @@ if(hasA){c.save();c.scale(r,r);ACC[t-5](c,0);c.restore()}
 if(SK&&SK.v){c.save();c.scale(r,r);vpig(c,t,SK);c.restore()}else{const im=S[hasA?1:t],w=r*2.1,h=w*im.height/im.width;c.drawImage(im,-w/2,-h/2+r*.05,w,h)}
 if(hasA){c.save();c.scale(r,r);ACC[t-5](c,1);c.restore()}if(SK&&!SK.v)SK.x(c,r);c.restore()}
 function rt(){const r=Math.random(),t=r<.3?0:r<.58?1:r<.8?2:r<.93?3:4;return window.HX?HX.up(t):t}
-function oink(t){try{A=A||new(window.AudioContext||webkitAudioContext)();const o=A.createOscillator(),g=A.createGain(),n=A.currentTime,f=420-t*22;o.type='sawtooth';o.frequency.setValueAtTime(f,n);o.frequency.exponentialRampToValueAtTime(f*.5,n+.2);g.gain.setValueAtTime(.1,n);g.gain.exponentialRampToValueAtTime(.001,n+.24);o.connect(g);g.connect(A.destination);o.start();o.stop(n+.26)}catch(e){}}
+function oink(t){if(window.CL&&!CL.s('snd'))return;try{A=A||new(window.AudioContext||webkitAudioContext)();const o=A.createOscillator(),g=A.createGain(),n=A.currentTime,f=420-t*22;o.type='sawtooth';o.frequency.setValueAtTime(f,n);o.frequency.exponentialRampToValueAtTime(f*.5,n+.2);g.gain.setValueAtTime(.1,n);g.gain.exponentialRampToValueAtTime(.001,n+.24);o.connect(g);g.connect(A.destination);o.start();o.stop(n+.26)}catch(e){}}
 function setNext(){const x=$('nx').getContext('2d');x.clearRect(0,0,48,48);pig(x,nxt,24,24,Math.min(R[nxt],20),0)}
 function reset(){eng=Engine.create({gravity:{y:1.1}});const w=eng.world,o={isStatic:true,friction:.3};
 Composite.add(w,[Bodies.rectangle(W/2,H+30,W*2,60,o),Bodies.rectangle(-30,H/2,60,H*3,o),Bodies.rectangle(W+30,H/2,60,H*3,o)]);
@@ -131,12 +131,12 @@ const IC={};
 function ic(t){if(!S.length)return'';if(!IC[t]){const k=document.createElement('canvas');k.width=k.height=96;pig(k.getContext('2d'),t,48,48,Math.min(R[t],30),0);IC[t]=k.toDataURL()}return IC[t]}
 const pg=t=>`<div class=sl><img src="${ic(t)}"><small>${N[t]}</small></div>`,BX='<div class=sl><span>💥</span><small>Сгорела</small></div>';
 const it=(t,a,b,att,cl='')=>`<button class="it ${cl}" ${att}><img src="${ic(t)}"><small>${a}</small><b>${b}</b></button>`;
-function sv(){lbq();G.i.forEach((n,t)=>{if(n)G.sn[t]=1});try{localStorage.setItem('pig_save',JSON.stringify(G))}catch(e){}ui()}
+function sv(){G.ts=Date.now();window.CL&&CL.q();lbq();G.i.forEach((n,t)=>{if(n)G.sn[t]=1});try{localStorage.setItem('pig_save',JSON.stringify(G))}catch(e){}ui()}
 function gain(n){G.c+=n;sv()}
 function ui(){$('co').innerHTML=ico('coin')+G.c;$('tray').innerHTML=BO.map(o=>G.b[o[0]]?`<button data-bo=${o[0]}>${o[1]}<b>${G.b[o[0]]}</b></button>`:'').join('')+G.i.map((n,t)=>n?`<button data-t=${t}><img src="${ic(t)}" width=30><b>${n}</b></button>`:'').join('')||'<small>Запас пуст — загляни в 🛒</small>';if($('pn').classList.contains('on')&&!busy)rend()}
 function rend(){$('co2').innerHTML=ico('coin')+G.c;$('tb').innerHTML=tab=='hub'?'<b class=ht>Меню</b>':`<button data-tab=${tab=='case'?'cases':'hub'} class=bk>${ico('back')}Назад</button><b class=ht>${TT[tab]}</b>`;void Object.keys(T).map(k=>`<button class="${k==tab?'a':''}" data-tab=${k}>${T[k]}</button>`).join('');
 if(G.i[sel]<=0)sel=-1;let h=mg?`<div id=rs>${mg}</div>`:'';
-if(tab=='hub')h+=hubh();else if(tab=='case')h+=caseh();else if(tab=='hero'||tab=='farm')h+=window.HX?HX.tab(tab):'';else if(tab=='shop')h+=bsh()+'<div class=g>'+[...Array(10).keys()].map(t=>it(t,N[t],'🪙'+P(t),'data-buy='+t)).join('')+'</div>';
+if(tab=='hub')h+=hubh();else if(tab=='case')h+=caseh();else if(tab=='hero'||tab=='farm')h+=window.HX?HX.tab(tab):'';else if(tab=='set')h+=window.CL?CL.tab():'';else if(tab=='shop')h+=bsh()+'<div class=g>'+[...Array(10).keys()].map(t=>it(t,N[t],'🪙'+P(t),'data-buy='+t)).join('')+'</div>';
 else if(tab=='cases')h+=(window.HX?HX.list():'')+pcs()+CS.map((c,i)=>`<div class=cc><button class=cs data-cv=c${i}><img src="${cimg(0,i)}" width=84><span style="flex:1"><b>${c[0]}</b><br>${c[2].map(p=>'<img src='+ic(p[0])+' width=24>').join('')}</span><b>🪙${c[1]}</b></button></div>`).join('');
 else if(tab=='lb')h+=lbh();else if(tab=='tr')h+=trh();else if(tab=='sk')h+=skh();else if(tab=='pe')h+=pedia();else if(tab=='ac')h+=ach();else if(tab=='dl')h+=dlh();
 else if(tab=='roul')h+=`<button class=cs data-roul=1><b>🎰 Крутить рулетку</b><b>🪙${RC}</b></button><small>Монеты, свинки или «Пусто»… и совсем редко — ХРЮ-ВСЕЛЕННАЯ!</small>`;
@@ -252,7 +252,7 @@ const HB=[['Игра',[['tr','tour']]],['Магазин',[['shop','shop'],['case
 const TC={tr:'#ff8a3d',shop:'#ff5c8a',cases:'#f2a900',roul:'#e0245e',up:'#20b26b',sk:'#8b5cf6',pe:'#3b82f6',ac:'#d49a00',dl:'#14b8a6',lb:'#ef4444'};
 const hubh=()=>HB.map(([t,a])=>`<p class=hh>${t}</p><div class=hg>`+a.map(([k,i])=>`<button class=tl data-tab=${k} style="background:linear-gradient(145deg,${TC[k]},${TC[k]}99)">${ico(i)}<span>${TT[k]}</span></button>`).join('')+'</div>').join('');
 let spT,spW,spOk=0,spRaf=0,spLast=-1,spFin=0;
-function tick(){try{A=A||new(window.AudioContext||webkitAudioContext)();const o=A.createOscillator(),g=A.createGain(),n=A.currentTime;o.type='square';o.frequency.value=900;g.gain.setValueAtTime(.03,n);g.gain.exponentialRampToValueAtTime(.001,n+.04);o.connect(g);g.connect(A.destination);o.start();o.stop(n+.05)}catch(e){}}
+function tick(){if(window.CL&&!CL.s('snd'))return;try{A=A||new(window.AudioContext||webkitAudioContext)();const o=A.createOscillator(),g=A.createGain(),n=A.currentTime;o.type='square';o.frequency.value=900;g.gain.setValueAtTime(.03,n);g.gain.exponentialRampToValueAtTime(.001,n+.04);o.connect(g);g.connect(A.destination);o.start();o.stop(n+.05)}catch(e){}}
 const pick=(pool,f)=>{if(pool.pk&&!f)return pool.pk();let r=Math.random()*pool.reduce((a,p)=>a+p.w,0);for(const p of pool)if((r-=p.w)<0)return p;return pool[0]};
 function spin(pool,cost,dial,n,fast){if(busy)return;if(n!==undefined&&window.HX)cost=HX.price(cost);n=n||1;
 if((n>1||fast)&&G.c>=cost*n){G.c-=cost*n;const w=[],t=[];for(let i=0;i<n;i++){const x=pick(pool);w.push(x);t.push(x.pr())}const sp=t.filter(x=>/СКИН|Дубликат/.test(x)).join('<br>');
@@ -283,7 +283,7 @@ const cb=[...document.querySelectorAll('.cb')],rv=i=>{cb[i].classList.remove('sh
 const done=()=>{if(!mA)return;mA=0;mT.forEach(clearTimeout);busy=0;const s=$('skp');if(s)s.remove();$('bd').insertAdjacentHTML('beforeend',(sp?'<div id=rs>'+sp+'</div>':'')+`<button class=cs data-cv=${cvw} style="justify-content:center;margin-top:12px">Готово</button>`)};
 mT=w.map((_,i)=>setTimeout(()=>rv(i),900+i*350));mT.push(setTimeout(done,900+w.length*350+500));
 window.mSkip=()=>{if(!mA)return;mT.forEach(clearTimeout);w.forEach((_,i)=>{if(cb[i].className.indexOf('rv')<0)rv(i)});done()}}
-const VER='v2026.11.18-d';let lbSt='';document.addEventListener('visibilitychange',()=>{if(document.hidden)lbSend()});
+const VER='v2026.11.19-e';let lbSt='';document.addEventListener('visibilitychange',()=>{if(document.hidden)lbSend()});
 $('mk').innerHTML=ico('shop');$('mn').onclick=()=>$('mk').click();
 $('ab').onclick=()=>{const n=Math.floor(+$('ai').value);if(n>0&&isFinite(n))gain(Math.min(n,1e9))};
 $('mk').onclick=()=>{pst=performance.now();pau=1;tab='hub';mg='';$('pn').classList.add('on');rend()};
@@ -296,6 +296,7 @@ else if(d.case!=null){const c=CS[+d.case];const nn=+d.n||1;if(G.c>=c[1]*nn)G.z.c
 else if(d.roul){spin(RP.map(([w,k,v])=>k?{w,h:pg(v),pr:()=>{G.i[v]++;return '🎉 Выпала свинка: '+N[v]+'!'}}:{w,h:`<div class=sl><span>${v?'🪙':'💩'}</span><small>${v?'+'+v:'Пусто'}</small></div>`,pr:()=>{G.c+=v;return v?'+'+v+' 🪙':'Пусто… хрю 💩'}}),RC)}
 else if(d.sel!=null)sel=+d.sel;
 else if(d.hx){HX.act(d.hx,d)}
+else if(d.cl){CL.act(d.cl,d)}
 else if(d.hc){HX.open(d.hc,+d.n||1,+d.fast)}
 else if(d.cv){cvw=d.cv;TT.case=cdef(cvw).n;tab='case';mg=''}
 else if(d.lr){lsent='';lbSend();setTimeout(loadLB,700)}
@@ -309,4 +310,4 @@ else if(d.up){const g=+d.up,p=ch(sel,g);G.i[sel]--;spin([{w:p,h:pg(g),pr:()=>{G.
 if(!busy)rend()};
 $('tray').onclick=e=>{const b=e.target.closest('button');if(!b||!run||pau)return;if(b.dataset.bo){useB(b.dataset.bo);return}const t=+b.dataset.t;if(G.i[t]>0){G.i[t]--;cur=t;sv()}};
 ui();
-</script><script src="heroes.js"></script></body></html>
+</script><script src="heroes.js"></script><script src="extras.js"></script></body></html>
