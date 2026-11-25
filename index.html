@@ -34,6 +34,21 @@ nav button.on{color:var(--ac);font-weight:700}
 .bar{height:6px;background:var(--line);border-radius:4px;overflow:hidden;margin-top:6px}.bar i{display:block;height:100%;background:var(--ac)}
 #toast{position:fixed;top:14px;left:50%;transform:translateX(-50%);background:#222;padding:10px 16px;border-radius:12px;z-index:20;display:none}
 select{width:100%;background:#26262c;color:#fff;border:1px solid var(--line);border-radius:10px;padding:11px;margin-top:6px}
+#app>*{animation:fade .3s both}@keyframes fade{from{opacity:0;transform:translateY(8px)}}
+.btn,.car{transition:transform .1s}.btn:active,.car:active{transform:scale(.97)}
+.top{position:sticky;top:0;background:var(--bg);padding:8px 0;z-index:5}
+.qa{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}.qa button{background:var(--card);border:1px solid var(--line);color:var(--tx);border-radius:14px;padding:16px 0;font-weight:700}
+.reel{position:relative;overflow:hidden;width:100%}.strip{display:flex;will-change:transform}.it{flex:0 0 120px;margin-right:10px}.it .car{min-height:110px;padding:8px}.it b{font-size:13px}
+.mark{position:absolute;left:50%;top:0;bottom:0;width:3px;background:var(--ac);z-index:2;box-shadow:0 0 12px var(--ac)}
+.rev{position:relative;text-align:center}.burst{position:absolute;left:50%;top:40%;width:440px;height:440px;margin:-220px;border-radius:50%;background:radial-gradient(var(--c),transparent 65%);opacity:.55;animation:bst .8s both}@keyframes bst{from{transform:scale(.2);opacity:0}}
+.rev>*:not(.burst){position:relative}
+.rw{width:100%;max-width:380px}
+.trk{position:relative;height:130px;border-radius:12px;overflow:hidden;background:#141417;border:1px solid var(--line);margin:12px 0}
+.road{position:absolute;left:0;right:0;top:50%;height:2px;background:repeating-linear-gradient(90deg,#3a3a42 0 26px,transparent 26px 52px)}.road.run{animation:rd .2s linear infinite}@keyframes rd{to{background-position-x:-52px}}
+.lane{position:absolute;left:0;right:0;height:50%}.lane:nth-of-type(2){top:0}.lane:nth-of-type(3){top:50%}
+.rc{position:absolute;left:6px;top:10px;width:80px;color:#888}.rc.me{color:var(--ac)}.rc svg{width:100%;fill:currentColor;filter:drop-shadow(0 0 6px currentColor)}
+.fin{position:absolute;right:0;top:0;bottom:0;width:10px;background:repeating-conic-gradient(#fff 0 25%,#000 0 50%) 0 0/10px 10px}
+.trk.bad{border-color:var(--ac);box-shadow:0 0 20px var(--ac)}.shk{animation:shk .12s 6}@keyframes shk{50%{transform:translateX(7px)}}
 </style></head><body>
 <div id="toast"></div><div id="app"></div>
 <nav id="nav"></nav>
@@ -47,7 +62,7 @@ const B={maxH:10,start:500,
  cases:{starter:{n:'Starter Case',p:0,o:{common:55,rare:25,super_rare:12,epic:5,mythic:2,legendary:1}},
   street:{n:'Street Case',p:400,o:{common:60,rare:26,super_rare:10,epic:3,mythic:.8,legendary:.2}},
   premium:{n:'Premium Case',p:3000,o:{common:20,rare:30,super_rare:28,epic:14,mythic:6,legendary:2}}},
- bots:{rookie:{n:'Rookie',pw:.8,r:40},street:{n:'Street Racer',pw:1,r:90},pro:{n:'Pro Driver',pw:1.2,r:200},elite:{n:'Elite',pw:1.45,r:450},champ:{n:'Champion',pw:1.7,r:1000}}};
+ bots:{rookie:{n:'Rookie',car:'Civic EK9',pw:.8,r:40},street:{n:'Street Racer',car:'Impreza WRX STI',pw:1,r:90},pro:{n:'Pro Driver',car:'E46 M3',pw:1.2,r:200},elite:{n:'Elite',car:'Supra MK4',pw:1.45,r:450},champ:{n:'Champion',car:'911 GT3',pw:1.7,r:1000}}};
 // Фото: добавьте поле img:'URL' к машине — оно подхватится автоматически
 const CARS=[['VW','Golf 5 GTI',2005,'common',200,15000],['Honda','Civic EK9',1998,'common',185,14000],['BMW','E36 328i',1996,'common',193,12000],
 ['Toyota','Corolla AE86',1985,'common',128,11000],['Mazda','RX-7 FD',1995,'rare',255,45000],['Subaru','Impreza WRX STI',2006,'rare',300,38000],
@@ -76,29 +91,42 @@ function openCase(id){const cs=B.cases[id];
  if(id==='starter')S.starter=1;else S.coins-=cs.p;
  const r=pick(cs.o),pool=CARS.filter(c=>c.r===r),car=pool[Math.floor(rnd(pool.length))];
  S.cars.push({c:car.id,u:Date.now()+'-'+Math.floor(rnd(1e6))});save();
- const ov=document.createElement('div');ov.className='ov';document.body.appendChild(ov);let n=0;
- const iv=setInterval(()=>{ov.innerHTML=card(CARS[Math.floor(rnd(CARS.length))]);if(++n>14){clearInterval(iv);
-  ov.innerHTML=`<div style="text-align:center">${card(car)}<button class="btn" id="ok" style="width:260px">В гараж</button></div>`;
-  $('ok').onclick=()=>{ov.remove();render()}}},90)}
+ const ov=document.createElement('div');ov.className='ov';document.body.appendChild(ov);
+ const WN=22,items=Array.from({length:28},(_,i)=>i===WN?car:CARS[Math.floor(rnd(CARS.length))]);
+ ov.innerHTML=`<div class="reel"><div class="mark"></div><div class="strip" id="st">${items.map(c=>`<div class="it">${card(c)}</div>`).join('')}</div></div>`;
+ const st=$('st'),w=st.parentElement.clientWidth;st.getBoundingClientRect();
+ st.style.transition='transform 2.6s cubic-bezier(.12,.7,.1,1)';st.style.transform=`translateX(-${WN*130+60-w/2+rnd(40)-20}px)`;
+ setTimeout(()=>{if(tg&&tg.HapticFeedback)try{tg.HapticFeedback.notificationOccurred('success')}catch(e){}
+  ov.innerHTML=`<div class="rev"><div class="burst" style="--c:${cv(car.r)}"></div><div style="width:260px;margin:auto">${card(car)}</div><button class="btn" id="ok" style="width:260px">В гараж</button></div>`;
+  $('ok').onclick=()=>{ov.remove();render()}},2900)}
 // ===== ГОНКИ =====
 let race=null;
+const SVG='<svg viewBox="0 0 80 28"><path d="M3 21L9 13L24 8H50L65 14L77 17V22H3Z"/><circle cx="20" cy="22" r="5" stroke="#0d0d0f" stroke-width="2"/><circle cx="62" cy="22" r="5" stroke="#0d0d0f" stroke-width="2"/></svg>';
 function startRace(cu,bk){const car=garage().find(c=>c.u===cu);if(!car)return;
- const today=new Date().toDateString();
- const ov=document.createElement('div');ov.className='ov';ov.innerHTML=`<div style="width:100%;max-width:340px"><div class="lights" id="L"><i></i><i></i><i></i></div><div class="big" id="T">Готов?</div><button class="btn" id="S">START</button></div>`;
+ const bot=B.bots[bk],bcar=CARS.find(c=>c.md===bot.car),today=new Date().toDateString();
+ const ov=document.createElement('div');ov.className='ov';
+ ov.innerHTML=`<div class="rw"><div class="m" style="text-align:center">${car.mk} ${car.md}<br>vs ${bot.n} · ${bcar.mk} ${bcar.md}</div>
+ <div class="trk" id="trk"><div class="road" id="rd"></div><div class="lane"><div class="rc me" id="pc">${SVG}</div></div><div class="lane"><div class="rc" id="bc" style="color:${cv(bcar.r)}">${SVG}</div></div><div class="fin"></div></div>
+ <div class="lights" id="L"><i></i><i></i><i></i></div><div class="big" id="T">Готов?</div><button class="btn" id="S">START</button><div id="res"></div></div>`;
  document.body.appendChild(ov);race={go:0,done:false,t:[]};
  const L=$('L').children,T=$('T');let i=0;
- const tick=()=>{if(i<3){L[i].classList.add('on');T.textContent=3-i;i++;race.t.push(setTimeout(tick,700))}else{race.t.push(setTimeout(()=>{race.go=performance.now();$('L').classList.add('go');T.textContent='GO!'},500+rnd(2500)))}};
+ const tick=()=>{if(i<3){L[i].classList.add('on');T.textContent=3-i;i++;race.t.push(setTimeout(tick,700))}else race.t.push(setTimeout(()=>{race.go=performance.now();$('L').classList.add('go');T.textContent='GO!'},500+rnd(2500)))};
  tick();
- $('S').onclick=()=>{if(race.done)return;race.done=true;race.t.forEach(clearTimeout);
-  const d=race.go?performance.now()-race.go:-1,fs=d<100;const bot=B.bots[bk];
+ $('S').onclick=()=>{if(race.done)return;race.done=true;race.t.forEach(clearTimeout);$('S').style.display='none';
+  const d=race.go?performance.now()-race.go:-1,fs=d<100;
   const rs=fs?-.25:Math.max(-.2,.2-d/1750),br=180+rnd(120);
   const me=car.hp/400*(1+rs)*(.9+rnd(.2)),foe=bot.pw*(1-(br-180)/1750)*(.9+rnd(.2)),win=me>foe;
   let rw=0;if(S.wd!==today){S.wd=today;S.wc=0}
   if(win){S.wins++;if(S.wc<B.winCap){S.wc++;rw=bot.r;S.coins+=rw}}else S.losses++;
   if(!fs&&(S.best===null||d<S.best))S.best=Math.round(d);save();
-  ov.innerHTML=`<div style="text-align:center;width:100%;max-width:340px"><div class="big" style="color:${win?'#39ff7a':'var(--ac)'}">${fs?'FALSE START':win?'ПОБЕДА':'ПОРАЖЕНИЕ'}</div>
-  <div class="box m">Реакция: ${fs?'—':Math.round(d)+' мс'}<br>Бот: ${Math.round(br)} мс<br>${win?(rw?'Награда: +'+rw+' CC':'Лимит наград на сегодня исчерпан'):''}</div><button class="btn" id="ok">Закрыть</button></div>`;
-  $('ok').onclick=()=>{ov.remove();render()}}}
+  const gap=Math.min(1.2,.3+Math.abs(me-foe)*1.5),base=2.4,tp=win?base:base+gap,tb=win?base+gap:base;
+  const run=(id,t)=>{const e=$(id);e.style.transition=`left ${t}s cubic-bezier(.45,0,.85,.65)`;e.style.left='calc(100% - 90px)'};
+  $('rd').classList.add('run');run('bc',tb);
+  if(fs){$('pc').classList.add('shk');$('trk').classList.add('bad');T.style.color='var(--ac)';T.textContent='FALSE START'}else{run('pc',tp);T.textContent=Math.round(d)+' мс'}
+  setTimeout(()=>{$('rd').classList.remove('run');
+   $('res').innerHTML=`<div class="big" style="color:${win?'#39ff7a':'var(--ac)'}">${fs?'ПОРАЖЕНИЕ':win?'ПОБЕДА':'ПОРАЖЕНИЕ'}</div>
+   <div class="box m">Реакция: ${fs?'—':Math.round(d)+' мс'} · бот: ${Math.round(br)} мс<br>${win?(rw?'Награда: +'+rw+' CC':'Лимит наград на сегодня исчерпан'):'Награды нет'}</div><button class="btn" id="ok">Закрыть</button>`;
+   $('ok').onclick=()=>{ov.remove();render()}},Math.max(tp,tb)*1000+300)}}
 // ===== ЭКРАНЫ =====
 let tab='home',sort='r',sel=null;
 const TABS=[['home','Главная'],['cases','Кейсы'],['garage','Гараж'],['race','Гонки'],['profile','Профиль']];
@@ -110,7 +138,7 @@ function render(){
   h=`<div class="box"><div class="m">Игрок</div><h2>${user?user.first_name:'Гонщик'}</h2><div class="m">Машин: ${S.cars.length} · Доход: ${hourly()} CC/ч</div></div>
   <div class="box"><b>Пассивный доход</b><div class="big">${cl} CC</div><div class="m">Копится до ${B.maxH} ч</div><button class="btn" ${cl?'':'disabled'} onclick="S.coins+=claimable();S.last=Date.now();save();toast('Получено');render()">Забрать</button></div>
   <div class="box"><b>Ежедневная награда</b><div class="m">Серия: ${S.ds} дн.</div><button class="btn" ${S.dd===today?'disabled':''} onclick="daily()">${S.dd===today?'Получена сегодня':'Получить'}</button></div>
-  ${!S.starter?`<button class="btn" onclick="tab='cases';render()">🎁 Бесплатный Starter Case</button>`:''}`}
+  <div class="qa"><button onclick="tab='cases';render()">Кейсы</button><button onclick="tab='garage';render()">Гараж</button><button onclick="tab='race';render()">Гонки</button></div>${!S.starter?`<button class="btn" onclick="openCase('starter')">🎁 Открыть бесплатный кейс</button>`:''}`}
  if(tab==='cases')h=`<h2>Кейсы</h2>`+Object.entries(B.cases).map(([id,c])=>`<div class="box"><b>${c.n}</b> <span class="m">${c.p?c.p+' CC':id==='starter'&&S.starter?'открыт':'бесплатно'}</span>
   <div class="m" style="margin-top:6px">${Object.entries(c.o).map(([r,p])=>`<span style="color:${cv(r)}">${B.rn[r]} ${p}%</span>`).join(' · ')}</div>
   <button class="btn" ${id==='starter'&&S.starter?'disabled':''} onclick="openCase('${id}')">Открыть</button></div>`).join('');
@@ -122,7 +150,7 @@ function render(){
   if(sel){const c=g.find(x=>x.u===sel);if(c)h+=`<div class="ov" onclick="if(event.target===this){sel=null;render()}"><div style="width:100%;max-width:320px">${card(c)}<div class="box m" style="margin-top:10px">Стоимость: ${c.v.toLocaleString()} CC<br>Продажа: ${Math.floor(c.v*B.sell*.01)} CC</div>
   <button class="btn g" onclick="sell('${c.u}')">Продать за ${Math.floor(c.v*B.sell*.01)} CC</button></div></div>`}}
  if(tab==='race'){const g=garage();h=`<h2>Гонки</h2>`+(g.length?`<div class="box"><div class="m">Машина</div><select id="rc">${g.map(c=>`<option value="${c.u}">${c.mk} ${c.md} (${c.hp} л.с.)</option>`).join('')}</select>
-  <div class="m" style="margin-top:10px">Соперник</div><select id="rb">${Object.entries(B.bots).map(([k,b])=>`<option value="${k}">${b.n} — награда ${b.r} CC</option>`).join('')}</select>
+  <div class="m" style="margin-top:10px">Соперник</div><select id="rb">${Object.entries(B.bots).map(([k,b])=>`<option value="${k}">${b.n} · ${b.car} · ${b.r} CC</option>`).join('')}</select>
   <button class="btn" onclick="startRace($('rc').value,$('rb').value)">Гоняться</button><div class="m" style="margin-top:8px">Побед с наградой сегодня: ${S.wd===new Date().toDateString()?S.wc:0}/${B.winCap}</div></div>`:`<div class="box m">Нужна хотя бы одна машина.</div>`)}
  if(tab==='profile'){const g=garage();h=`<div class="box"><h2>${user?user.first_name:'Гонщик'}</h2>
   <div class="m">Машин: ${g.length}<br>Стоимость гаража: ${g.reduce((s,c)=>s+c.v,0).toLocaleString()} CC<br>Победы: ${S.wins} · Поражения: ${S.losses}<br>Лучшая реакция: ${S.best===null?'—':S.best+' мс'}</div></div>
